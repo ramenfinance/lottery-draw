@@ -1,0 +1,16 @@
+{
+  "name": "lottery-draw",
+  "version": "1.0.0",
+  "description": "Hungrybera Lottery Draw",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "csvtojson": "^2.0.10",
+    "seedrandom": "^3.0.5"
+  }
+}
