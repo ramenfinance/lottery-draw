@@ -5,14 +5,12 @@ const fs = require('fs');
 const TOTAL_SLOTS = 1600;
 const MAX_ECOSYSTEM_WINNERS = 1500;
 
-// TODO: Run seed generation in an AMA
-const SEED = '69420';
+const SEED = '824';
 const rand = seedrandom(SEED);
 
 (async function main() {
   const winners = [];
 
-  // TODO: Replace file with records after lottery closes
   let ecosystemParticipants = await csv().fromFile('./ecosystem.csv');
   while (
     winners.length < MAX_ECOSYSTEM_WINNERS &&
@@ -43,7 +41,6 @@ const rand = seedrandom(SEED);
     (cache, addie) => Object.assign({}, cache, { [addie]: {} }),
     {},
   );
-  // TODO: Replace file with records after lottery closes
   let testnetParticipants = await csv().fromFile('./testnet.csv');
   // removed addresses that have already won
   testnetParticipants = testnetParticipants.filter(
