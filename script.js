@@ -10,6 +10,7 @@ const rand = seedrandom(SEED);
 
 (async function main() {
   const winners = [];
+  const diff = [];
 
   let ecosystemParticipants = await csv().fromFile('./ecosystem.csv');
   while (
@@ -17,7 +18,7 @@ const rand = seedrandom(SEED);
     ecosystemParticipants.length > 0
   ) {
     const totalEntries = ecosystemParticipants.reduce(
-      (total, p) => total + p.entries,
+      (total, p) => total + parseInt(p.entries),
       0,
     );
     let winningEntry = rand() * totalEntries;
@@ -29,7 +30,16 @@ const rand = seedrandom(SEED);
         break;
       }
     }
-    winners.push(ecosystemParticipants[winnerIndex].address);
+    winners.push({
+      addie: ecosystemParticipants[winnerIndex].address,
+      type: 'ecosystem',
+    });
+    if (winnerIndex >= 1500) {
+      diff.push({
+        addie: ecosystemParticipants[winnerIndex].address,
+        type: 'ecosystem',
+      });
+    }
     ecosystemParticipants = [
       ...ecosystemParticipants.slice(0, winnerIndex),
       ...ecosystemParticipants.slice(winnerIndex + 1),
@@ -38,7 +48,7 @@ const rand = seedrandom(SEED);
 
   // To check if address has won to not be chosen again
   const winnerCache = winners.reduce(
-    (cache, addie) => Object.assign({}, cache, { [addie]: {} }),
+    (cache, winner) => Object.assign({}, cache, { [winner.addie]: {} }),
     {},
   );
   let testnetParticipants = await csv().fromFile('./testnet.csv');
@@ -48,7 +58,7 @@ const rand = seedrandom(SEED);
   );
   while (winners.length < TOTAL_SLOTS && testnetParticipants.length > 0) {
     const totalEntries = testnetParticipants.reduce(
-      (total, p) => total + p.entries,
+      (total, p) => total + parseInt(p.entries),
       0,
     );
     let winningEntry = rand() * totalEntries;
@@ -60,12 +70,32 @@ const rand = seedrandom(SEED);
         break;
       }
     }
-    winners.push(testnetParticipants[winnerIndex].address);
+    winners.push({
+      addie: testnetParticipants[winnerIndex].address,
+      type: 'testnet',
+    });
+    if (winnerIndex >= 1500) {
+      diff.push({
+        addie: testnetParticipants[winnerIndex].address,
+        type: 'testnet',
+      });
+    }
     testnetParticipants = [
       ...testnetParticipants.slice(0, winnerIndex),
       ...testnetParticipants.slice(winnerIndex + 1),
     ];
   }
 
-  fs.writeFileSync('./tmp/results.csv', `winners\n${winners.join('\n')}`);
+  fs.writeFileSync(
+    './tmp/results.csv',
+    `Address,Count,Remarks\n${winners
+      .map((w) => `${w.addie},2,${w.type}`)
+      .join('\n')}`,
+  );
+  fs.writeFileSync(
+    './tmp/diff.csv',
+    `Address,Count,Remarks\n${diff
+      .map((w) => `${w.addie},2,${w.type}`)
+      .join('\n')}`,
+  );
 })();
